@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexu | Mis Pedidos</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700&display=swap" rel="stylesheet" />
+
+  <style>
+    body {
+      background: #0d1117;
+      color: white;
+      font-family: 'Montserrat', sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    header {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(8px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 40px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: 700;
+      color: #f1f1f1;
+      text-shadow: 0 0 10px rgba(79, 172, 254, 0.5);
+    }
+
+    nav ul {
+      display: flex;
+      list-style: none;
+      gap: 20px;
+    }
+
+    nav a {
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      font-weight: 500;
+      transition: 0.3s;
+    }
+
+    nav a:hover {
+      color: #4facfe;
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #4facfe;
+      margin-bottom: 30px;
+      text-shadow: 0 0 10px rgba(79,172,254,0.4);
+    }
+
+    .pedido-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 10px rgba(79,172,254,0.1);
+      transition: 0.3s;
+    }
+
+    .pedido-card:hover {
+      transform: scale(1.02);
+      box-shadow: 0 0 15px rgba(79,172,254,0.3);
+    }
+
+    .pedido-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .pedido-header span {
+      font-size: 14px;
+      color: rgba(255,255,255,0.7);
+    }
+
+    .pedido-total {
+      color: #4facfe;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .pedido-detalles {
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 10px;
+      margin-top: 10px;
+    }
+
+    .pedido-detalles div {
+      margin-bottom: 6px;
+      color: rgba(255,255,255,0.85);
+    }
+
+    .btn-factura {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(79,172,254,0.1);
+      color: #4facfe;
+      text-decoration: none;
+      padding: 8px 15px;
+      border-radius: 25px;
+      margin-top: 10px;
+      transition: 0.3s;
+      font-size: 14px;
+    }
+
+    .btn-factura:hover {
+      background: #4facfe;
+      color: white;
+    }
+
+    footer {
+      text-align: center;
+      padding: 40px 20px;
+      color: rgba(255, 255, 255, 0.6);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.02);
+      margin-top: 40px;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="logo">NEXU</div>
+    <nav>
+      <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="productos.html">Centro de Ayuda</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <h1>Mis pedidos</h1>
+    <div id="contenedor-pedidos">
+      <p style="text-align:center;color:gray;">Cargando pedidos...</p>
+    </div>
+  </main>
+
+  <footer>© 2025 Nexu Technologies. Todos los derechos reservados.</footer>
+
+  <script>
+    async function cargarPedidos() {
+      const usuarioStr = localStorage.getItem("usuario");
+      const token = localStorage.getItem("token");
+
+      if (!usuarioStr || !token) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      const usuario = JSON.parse(usuarioStr);
+
+      try {
+        const res = await fetch(`http://localhost:4000/api/pedidos/usuario/${usuario.id}`, {
+          headers: { "Authorization": "Bearer " + token }
+        });
+
+        const pedidos = await res.json();
+        const contenedor = document.getElementById("contenedor-pedidos");
+        contenedor.innerHTML = "";
+
+        if (!res.ok || pedidos.length === 0) {
+          contenedor.innerHTML = "<p style='text-align:center;color:gray;'>Aún no tienes pedidos realizados 🛒</p>";
+          return;
+        }
+
+        pedidos.forEach(pedido => {
+          const div = document.createElement("div");
+          div.classList.add("pedido-card");
+          div.innerHTML = `
+            <div class="pedido-header">
+              <div>
+                <span><strong>Factura:</strong> ${pedido.numero_factura || "—"}</span><br>
+                <span><strong>Fecha:</strong> ${new Date(pedido.fecha).toLocaleString()}</span>
+              </div>
+              <div class="pedido-total">Total: $${Number(pedido.total).toFixed(2)}</div>
+
+            </div>
+            <div class="pedido-detalles">
+              ${pedido.detalles.map(d => `
+                <div>• ${d.nombre} ×${d.cantidad} — $${(d.precio_unitario * d.cantidad).toFixed(2)}</div>
+              `).join("")}
+            </div>
+            <a href="factura.html?factura=${pedido.numero_factura}" target="_blank" class="btn-factura">
+              <i class="fa-solid fa-file-invoice"></i> Ver factura
+            </a>
+          `;
+          contenedor.appendChild(div);
+        });
+
+      } catch (error) {
+        console.error("Error al cargar pedidos:", error);
+        document.getElementById("contenedor-pedidos").innerHTML =
+          "<p style='text-align:center;color:red;'>Error al cargar tus pedidos 😔</p>";
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", cargarPedidos);
+  </script>
+</body>
+</html>

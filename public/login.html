@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Iniciar Sesion</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700&display=swap" rel="stylesheet" />
+
+    <style>
+        /* ============ RESET & BASICS ============ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #0d1117;
+            /* Fondo de respaldo si falla el canvas */
+            color: #ffffff;
+            height: 100vh;
+            overflow: hidden;
+            /* Evita scrollbars por la animación */
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* ============ CANVAS FONDO ============ */
+        #galaxy-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            /* Envía el canvas al fondo */
+            background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+        }
+
+        /* ============ HEADER (Transparent) ============ */
+        .encabezado {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .logo-text {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-shadow: 0 0 10px rgba(79, 172, 254, 0.5);
+            transition: 0.3s ease;
+        }
+
+        .logo-text:hover {
+            color: #4facfe;
+            text-shadow: 0 0 20px rgba(79, 172, 254, 0.7);
+        }
+
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+            transition: 0.3s;
+            font-size: 16px;
+        }
+
+        nav a:hover,
+        nav a.active {
+            color: #fff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        /* ============ LOGIN CONTAINER ============ */
+        .login-wrapper {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 5;
+            padding: 20px;
+        }
+
+        /* ============ GLASS CARD (Minimalist) ============ */
+        .login-card {
+            background: rgba(255, 255, 255, 0.03);
+            /* Casi transparente */
+            backdrop-filter: blur(16px);
+            /* Efecto vidrio esmerilado */
+            -webkit-backdrop-filter: blur(16px);
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .login-logo {
+            text-align: left;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 10px;
+            text-shadow: 0 0 12px rgba(79, 172, 254, 0.6);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            animation: glow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 8px rgba(79, 172, 254, 0.4);
+            }
+
+            to {
+                text-shadow: 0 0 20px rgba(79, 172, 254, 0.9);
+            }
+        }
+
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        .login-card h2 {
+            text-align: left;
+            color: #fff;
+            margin-bottom: 30px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-size: 18px;
+        }
+
+        /* ============ INPUTS & LABELS ============ */
+        .input-group {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 0;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            font-size: 16px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .input-group label {
+            position: absolute;
+            top: 10px;
+            left: 0;
+            color: rgba(255, 255, 255, 0.5);
+            pointer-events: none;
+            transition: 0.3s;
+            font-size: 16px;
+        }
+
+        /* Animación del Label al escribir */
+        .input-group input:focus~label,
+        .input-group input:valid~label {
+            top: -12px;
+            font-size: 12px;
+            color: #4facfe;
+        }
+
+        .input-group input:focus {
+            border-bottom: 1px solid #4facfe;
+            box-shadow: 0 1px 0 0 #4facfe;
+        }
+
+        /* ============ BUTTON ============ */
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #05326F 0%, #4facfe 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            margin-top: 10px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-login:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 15px rgba(79, 172, 254, 0.4);
+        }
+
+        .extra {
+            margin-top: 25px;
+            text-align: center;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .extra a {
+            color: #4facfe;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .extra a:hover {
+            text-decoration: underline;
+        }
+
+        /* ============ FOOTER ============ */
+        .footer {
+            background: rgba(255, 255, 255, 0.03);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            color: #ccc;
+            text-align: center;
+            padding: 40px 20px 20px;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            max-width: 1000px;
+            margin: 0 auto 20px;
+            gap: 20px;
+        }
+
+        .footer-left {
+            flex: 1;
+            min-width: 250px;
+            text-align: left;
+        }
+
+        .footer-logo {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 26px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(79, 172, 254, 0.4);
+        }
+
+        .footer-left p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: flex-end;
+            align-items: center;
+            min-width: 200px;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: #4facfe;
+            text-shadow: 0 0 8px rgba(79, 172, 254, 0.5);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 15px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .footer-left {
+                text-align: center;
+            }
+
+            .footer-links {
+                justify-content: center;
+            }
+        }
+
+
+        /* ============ RESPONSIVE ============ */
+        @media (max-width: 768px) {
+            .encabezado {
+                padding: 15px 20px;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .login-card {
+                width: 90%;
+                padding: 30px 20px;
+            }
+        }
+
+        /* ============ MOBILE OPTIMIZATION (menos de 480px) ============ */
+        @media (max-width: 480px) {
+
+            body {
+                overflow-y: auto;
+                /* permite hacer scroll si es necesario */
+            }
+
+            .login-wrapper {
+                padding: 10px;
+            }
+
+            .login-card {
+                width: 100%;
+                max-width: 320px;
+                padding: 20px 15px;
+                border-radius: 15px;
+                animation: none;
+                /* quita flotación para no sobrecargar móviles */
+            }
+
+            .login-logo {
+                font-size: 24px;
+                text-align: center;
+                /* centramos el título para mejor vista móvil */
+                margin-bottom: 5px;
+            }
+
+            .login-card h2 {
+                font-size: 14px;
+                text-align: center;
+                margin-bottom: 15px;
+            }
+
+            .input-group input {
+                font-size: 14px;
+                padding: 10px 0;
+            }
+
+            .btn-login {
+                padding: 12px;
+                font-size: 14px;
+                border-radius: 40px;
+            }
+
+            .extra {
+                font-size: 12px;
+            }
+
+            /* Footer más compacto */
+            .footer {
+                padding: 25px 10px;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+
+            .footer-left p {
+                font-size: 12px;
+            }
+
+            .footer-links {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .footer-links a {
+                font-size: 12px;
+            }
+
+            .footer-bottom p {
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <canvas id="galaxy-canvas"></canvas>
+
+    <!-- ============ HEADER (Transparent) ============ -->
+    <header class="encabezado">
+        <div class="logo-container">
+            <h1 class="logo-text">Nexu</h1>
+        </div>
+
+    </header>
+
+
+
+    <div class="login-wrapper">
+        <form class="login-card">
+            <h1 class="login-logo">NEXU</h1>
+            <h2>Iniciar Sesión</h2>
+
+            <div class="input-group">
+                <input type="text" id="usuario" required>
+                <label for="usuario">Usuario</label>
+            </div>
+
+            <div class="input-group">
+                <input type="password" id="password" required>
+                <label for="password">Contraseña</label>
+            </div>
+
+            <button type="submit" class="btn-login">Iniciar Sesión</button>
+
+            <p class="extra">
+                ¿No tienes cuenta? <a href="register.html">Registrarse</a>
+            </p>
+        </form>
+    </div>
+
+
+    <script>
+        // ===============================
+        //  LOGIN - CONEXIÓN CON BACKEND
+        // ===============================
+        document.querySelector(".login-card").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById("usuario").value.trim();
+            const password = document.getElementById("password").value.trim();
+
+            if (!email || !password) {
+                alert("Ingresa tu usuario y contraseña");
+                return;
+            }
+
+            try {
+                const response = await fetch("http://localhost:4000/api/auth/login", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    alert(data.message || "Error al iniciar sesión");
+                    return;
+                }
+
+                // Guardar token y usuario
+                localStorage.setItem("token", data.token);
+                localStorage.setItem("usuario", JSON.stringify(data.usuario));
+
+                alert(`Bienvenido ${data.usuario.nombre}!`);
+
+                // Redirigir al home o dashboard
+                window.location.href = "index.html";
+
+            } catch (error) {
+                console.error(error);
+                alert("Error de conexión con el servidor");
+            }
+        });
+
+        // ===================================
+        // SISTEMA DE ESTRELLAS (tu animación)
+        // ===================================
+        const canvas = document.getElementById('galaxy-canvas');
+        const ctx = canvas.getContext('2d');
+
+        let width, height;
+        let stars = [];
+        const numStars = 150;
+
+        function resize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+        }
+
+        class Star {
+            constructor() { this.reset(); }
+
+            reset() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.size = Math.random() * 2;
+                this.speed = Math.random() * 0.5 + 0.1;
+                this.opacity = Math.random();
+                this.fadeDir = 0.01;
+            }
+
+            update() {
+                this.y -= this.speed;
+                this.opacity += this.fadeDir;
+
+                if (this.opacity >= 1 || this.opacity <= 0.2) {
+                    this.fadeDir = -this.fadeDir;
+                }
+
+                if (this.y < 0) {
+                    this.y = height;
+                    this.x = Math.random() * width;
+                }
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255,255,255,${this.opacity})`;
+                ctx.fill();
+            }
+        }
+
+        function init() {
+            resize();
+            stars = [];
+            for (let i = 0; i < numStars; i++) stars.push(new Star());
+            animate();
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            stars.forEach((s) => { s.update(); s.draw(); });
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener("resize", resize);
+        init();
+    </script>
+
+
+</body>
+
+<footer class="footer">
+    <div class="footer-content">
+        <div class="footer-left">
+            <h2 class="footer-logo">NEXU</h2>
+            <p>Innovación, diseño y tecnología para impulsar tu negocio al siguiente nivel.</p>
+        </div>
+
+        <div class="footer-links">
+            <a href="https://www.notion.so/INFORMACI-N-LEGAL-Y-ATENCI-N-AL-CLIENTE-2cbfd741b842801c8ad1deefea9e1c96?source=copy_link">Condiciones de uso</a>
+            <a href="https://www.notion.so/INFORMACI-N-LEGAL-Y-ATENCI-N-AL-CLIENTE-2cbfd741b842801c8ad1deefea9e1c96?source=copy_link">Privacidad</a>
+            <a href="https://www.notion.so/INFORMACI-N-LEGAL-Y-ATENCI-N-AL-CLIENTE-2cbfd741b842801c8ad1deefea9e1c96?source=copy_link">Soporte</a>
+            <a href="https://www.notion.so/INFORMACI-N-LEGAL-Y-ATENCI-N-AL-CLIENTE-2cbfd741b842801c8ad1deefea9e1c96?source=copy_link">Contáctanos</a>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <p>© 2025 Nexu Technologies. Todos los derechos reservados.</p>
+    </div>
+</footer>
+</html>

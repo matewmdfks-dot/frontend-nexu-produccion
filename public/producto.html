@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nexu | Detalle del Producto</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            background: #0d1117;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* ===== FONDO GALÁCTICO ===== */
+        #galaxy-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+        }
+
+        /* HEADER */
+        header {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: #f1f1f1;
+            text-shadow: 0 0 10px rgba(79, 172, 254, 0.5);
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            padding: 5px 15px;
+            width: 40%;
+        }
+
+        .search-bar input {
+            border: none;
+            background: transparent;
+            color: white;
+            width: 100%;
+            padding: 8px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .search-bar i {
+            color: #4facfe;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+
+        nav a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.3s;
+        }
+
+        nav a:hover {
+            color: #4facfe;
+        }
+
+        #cart-count {
+            background: #4facfe;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            border-radius: 50%;
+            padding: 3px 7px;
+            position: relative;
+            top: -10px;
+            right: 10px;
+        }
+
+        /* DETALLE DEL PRODUCTO */
+        .detalle-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 50px 20px;
+            gap: 50px;
+            max-width: 1200px;
+            margin: 60px auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .detalle-imagen {
+            flex: 1 1 350px;
+            text-align: center;
+        }
+
+        .detalle-imagen img {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(79, 172, 254, 0.2);
+        }
+
+        .detalle-info {
+            flex: 1 1 400px;
+        }
+
+        .detalle-info h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            color: #4facfe;
+        }
+
+        .detalle-info p {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .precio {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4facfe;
+        }
+
+        .precio span {
+            color: gray;
+            text-decoration: line-through;
+            font-size: 18px;
+            margin-right: 10px;
+        }
+
+        .botones {
+            margin-top: 20px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #05326F, #4facfe);
+            border: none;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 12px rgba(79, 172, 254, 0.5);
+        }
+
+        /* PRODUCTOS SIMILARES */
+        .similares {
+            margin-top: 60px;
+            padding: 40px 60px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .similares h2 {
+            font-size: 22px;
+            margin-bottom: 25px;
+            text-shadow: 0 0 10px rgba(79, 172, 254, 0.5);
+        }
+
+        .grid-similares {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+        }
+
+        .producto-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .producto-card:hover {
+            background: rgba(79, 172, 254, 0.08);
+            transform: translateY(-4px);
+        }
+
+        .producto-card img {
+            width: 100%;
+            height: 180px;
+            border-radius: 10px;
+            object-fit: cover;
+            margin-bottom: 10px;
+        }
+
+        .producto-card h3 {
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: #fff;
+        }
+
+        .producto-card p {
+            color: #4facfe;
+            font-weight: 600;
+        }
+
+        /* FOOTER */
+        .footer {
+            background: rgba(255, 255, 255, 0.03);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            color: #ccc;
+            text-align: center;
+            padding: 40px 20px 20px;
+            margin-top: auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            max-width: 1000px;
+            margin: 0 auto 20px;
+            gap: 20px;
+        }
+
+        .footer-left {
+            flex: 1;
+            min-width: 250px;
+            text-align: left;
+        }
+
+        .footer-logo {
+            font-size: 26px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(79, 172, 254, 0.4);
+        }
+
+        .footer-left p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: flex-end;
+            align-items: center;
+            min-width: 200px;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: #4facfe;
+            text-shadow: 0 0 8px rgba(79, 172, 254, 0.5);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 15px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* === MENÚ DE USUARIO === */
+.user-menu {
+  position: relative;
+}
+
+.user-menu a {
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.user-menu a:hover {
+  color: #4facfe;
+}
+
+/* 🔽 Dropdown */
+.dropdown {
+  display: none;
+  position: absolute;
+  top: 45px;
+  right: 0;
+  background: rgba(30, 35, 45, 0.95);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  min-width: 160px;
+  z-index: 20;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.dropdown a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 15px;
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.dropdown a:hover {
+  background: rgba(79, 172, 254, 0.1);
+  color: #4facfe;
+}
+
+.dropdown i {
+  width: 18px;
+  text-align: center;
+}
+
+
+        @media (max-width: 768px) {
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .footer-left {
+                text-align: center;
+            }
+
+            .footer-links {
+                justify-content: center;
+            }
+
+            .search-bar {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="galaxy-canvas"></canvas>
+
+    <!-- HEADER -->
+    <header>
+        <div class="logo">NEXU</div>
+        <div class="search-bar">
+            <input type="text" placeholder="Buscar productos..." />
+            <i class="fa-solid fa-magnifying-glass"></i>
+        </div>
+        <nav>
+  <ul>
+    <li><a href="index.html">Inicio</a></li>
+    <li><a href="https://www.notion.so/Centro-de-Ayuda-NEXU-2cbfd741b84280f29483c8c05a97c193?source=copy_link">Centro de Ayuda</a></li>
+
+    <!-- 🔹 Icono de usuario con menú desplegable -->
+    <li class="user-menu">
+      <a href="#" id="user-icon"><i class="fa-solid fa-user"></i></a>
+      <div class="dropdown" id="user-dropdown">
+        <!-- El contenido se rellena dinámicamente con JS -->
+      </div>
+    </li>
+
+    <li>
+      <a href="carrito.html" class="carrito-link">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <span id="cart-count">0</span>
+      </a>
+    </li>
+  </ul>
+</nav>
+
+    </header>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main id="detalle-producto"></main>
+
+    <!-- PRODUCTOS SIMILARES -->
+    <section class="similares">
+        <h2>Productos Similares</h2>
+        <div class="grid-similares" id="similares"></div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-left">
+                <h2 class="footer-logo">NEXU</h2>
+                <p>Innovación, diseño y tecnología para impulsar tu negocio al siguiente nivel.</p>
+            </div>
+            <div class="footer-links">
+                <a href="https://www.notion.so/INFORMACI-N-LEGAL-Y-ATENCI-N-AL-CLIENTE-2cbfd741b842801c8ad1deefea9e1c96?source=copy_link">Condiciones de uso</a>
+                <a href="https://www.notion.so/INFORMACI-N-LEGAL-Y-ATENCI-N-AL-CLIENTE-2cbfd741b842801c8ad1deefea9e1c96?source=copy_link">Privacidad</a>
+                <a href="https://www.notion.so/INFORMACI-N-LEGAL-Y-ATENCI-N-AL-CLIENTE-2cbfd741b842801c8ad1deefea9e1c96?source=copy_link">Soporte</a>
+                <a href="https://www.notion.so/INFORMACI-N-LEGAL-Y-ATENCI-N-AL-CLIENTE-2cbfd741b842801c8ad1deefea9e1c96?source=copy_link">Contáctanos</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2025 Nexu Technologies. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- 🌠 ANIMACIÓN DE ESTRELLAS -->
+    <script>
+        const canvas = document.getElementById('galaxy-canvas');
+        const ctx = canvas.getContext('2d');
+
+        let width, height, stars = [];
+        const numStars = 150;
+
+        function resize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+        }
+
+        class Star {
+            constructor() { this.reset(); }
+            reset() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.size = Math.random() * 2;
+                this.speed = Math.random() * 0.5 + 0.1;
+                this.opacity = Math.random();
+                this.fadeDir = 0.01;
+            }
+            update() {
+                this.y -= this.speed;
+                this.opacity += this.fadeDir;
+                if (this.opacity >= 1 || this.opacity <= 0.2) this.fadeDir = -this.fadeDir;
+                if (this.y < 0) { this.y = height; this.x = Math.random() * width; }
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255,255,255,${this.opacity})`;
+                ctx.fill();
+            }
+        }
+
+        function initStars() {
+            resize();
+            stars = [];
+            for (let i = 0; i < numStars; i++) stars.push(new Star());
+            animateStars();
+        }
+
+        function animateStars() {
+            ctx.clearRect(0, 0, width, height);
+            stars.forEach(s => { s.update(); s.draw(); });
+            requestAnimationFrame(animateStars);
+        }
+
+        window.addEventListener("resize", resize);
+        initStars();
+    </script>
+
+    <!-- SCRIPT PRODUCTO -->
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get("id");
+
+        async function cargarProducto() {
+            try {
+                const res = await fetch(`http://localhost:4000/api/productos/${id}`);
+                const producto = await res.json();
+
+                if (!res.ok) return alert("Producto no encontrado");
+
+                const detalle = document.getElementById("detalle-producto");
+
+                const precioMostrar = producto.es_oferta && producto.precio_oferta
+                    ? `<p class="precio"><span>$${producto.precio}</span>$${producto.precio_oferta}</p>`
+                    : `<p class="precio">$${producto.precio}</p>`;
+
+                detalle.innerHTML = `
+          <div class="detalle-container">
+            <div class="detalle-imagen">
+              <img src="${producto.imagen}" alt="${producto.nombre}">
+            </div>
+            <div class="detalle-info">
+              <h1>${producto.nombre}</h1>
+              ${precioMostrar}
+              <p>${producto.descripcion}</p>
+              <p><b>Stock:</b> ${producto.stock}</p>
+              <div class="botones">
+                <button class="btn" onclick="agregarAlCarrito(${producto.id})">Agregar al carrito</button>
+                <button class="btn" onclick="window.location.href='index.html'">Volver</button>
+              </div>
+            </div>
+          </div>
+        `;
+
+                cargarSimilares(producto.categoria, producto.id);
+
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        async function cargarSimilares(categoria, idActual) {
+            try {
+                const res = await fetch("http://localhost:4000/api/productos");
+                const productos = await res.json();
+
+                // Filtramos solo los de la misma categoría y diferentes al actual
+                const similares = productos.filter(p => p.categoria === categoria && p.id !== idActual);
+
+                const contenedor = document.getElementById("similares");
+                contenedor.innerHTML = "";
+
+                // Mostramos máximo 4 productos similares
+                similares.slice(0, 6).forEach(prod => {
+                    const card = document.createElement("div");
+                    card.classList.add("producto-card");
+                    card.innerHTML = `
+        <img src="${prod.imagen}" alt="${prod.nombre}">
+        <h3>${prod.nombre}</h3>
+        <p>$${prod.precio}</p>
+      `;
+                    card.addEventListener("click", () => {
+                        window.location.href = "producto.html?id=" + prod.id;
+                    });
+                    contenedor.appendChild(card);
+                });
+
+            } catch (error) {
+                console.error("Error al cargar productos similares:", error);
+            }
+        }
+
+
+        function agregarAlCarrito(id) {
+            let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+            const existe = carrito.find(p => p.id === id);
+            if (!existe) carrito.push({ id });
+            localStorage.setItem("carrito", JSON.stringify(carrito));
+            alert("Producto agregado al carrito ✅");
+            actualizarContadorCarrito();
+        }
+
+        function actualizarContadorCarrito() {
+            const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+            const countEl = document.getElementById("cart-count");
+            if (countEl) countEl.textContent = carrito.length;
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            actualizarContadorCarrito();
+            cargarProducto();
+        });
+    </script>
+
+    <script>
+  // 🔒 Protección de rutas
+  (function protegerRuta() {
+    const token = localStorage.getItem("token");
+    const usuario = localStorage.getItem("usuario");
+
+    // Si no hay token o usuario → redirigir
+    if (!token || !usuario) {
+      window.location.replace("login.html");
+      return; // 🔹 importante para detener el resto del script
+    }
+
+    // Si hay sesión, mostrar el nombre del usuario en el header (opcional)
+    try {
+      const user = JSON.parse(usuario);
+      const nav = document.querySelector("nav ul");
+      const item = document.createElement("li");
+      item.innerHTML = `<span style="color:#4facfe;">Hola, ${user.nombre}</span>`;
+      nav.appendChild(item);
+    } catch (err) {
+      console.warn("Error leyendo usuario:", err);
+      window.location.replace("login.html");
+    }
+  })();
+
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const userIcon = document.getElementById("user-icon");
+  const dropdown = document.getElementById("user-dropdown");
+  const usuario = JSON.parse(localStorage.getItem("usuario"));
+  const token = localStorage.getItem("token");
+
+  dropdown.innerHTML = "";
+
+  if (usuario && token) {
+
+    // 🔹 Opción Mis pedidos
+    let menuHTML = `
+      <a href="pedidos.html">
+        <i class="fa-solid fa-box"></i> Mis pedidos
+      </a>
+    `;
+
+    // 🟢 SOLO SI ES ADMIN
+    if (usuario.rol === "admin") {
+      menuHTML += `
+        <a href="admin.html" style="color:#3ecf8e; font-weight:600;">
+          <i class="fa-solid fa-screwdriver-wrench"></i> Administrar
+        </a>
+      `;
+    }
+
+    // 🔻 Cerrar sesión
+    menuHTML += `
+      <a href="#" id="logout">
+        <i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión
+      </a>
+    `;
+
+    dropdown.innerHTML = menuHTML;
+
+  } else {
+    dropdown.innerHTML = `
+      <a href="login.html">
+        <i class="fa-solid fa-right-to-bracket"></i> Iniciar sesión
+      </a>
+    `;
+  }
+
+  // Mostrar / ocultar dropdown
+  userIcon.addEventListener("click", (e) => {
+    e.preventDefault();
+    dropdown.style.display =
+      dropdown.style.display === "block" ? "none" : "block";
+  });
+
+  // Cerrar al hacer click fuera
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest(".user-menu")) {
+      dropdown.style.display = "none";
+    }
+  });
+
+  // Cerrar sesión
+  document.getElementById("logout")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    localStorage.removeItem("usuario");
+    localStorage.removeItem("token");
+    window.location.href = "login.html";
+  });
+});
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexu | Innovación y Tecnología</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700&display=swap" rel="stylesheet" />
+    <style>
+        /* RESET */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            /* 🔹 Scroll suave */
+        }
+
+        body {
+            background: #0d1117;
+            color: white;
+        }
+
+        /* HEADER */
+        header {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: #f1f1f1;
+            text-shadow: 0 0 10px rgba(79, 172, 254, 0.5);
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            padding: 5px 15px;
+            width: 40%;
+        }
+
+        .search-bar input {
+            border: none;
+            background: transparent;
+            color: white;
+            width: 100%;
+            padding: 8px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .search-bar i {
+            color: #4facfe;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+
+        nav a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.3s;
+        }
+
+        nav a:hover {
+            color: #4facfe;
+        }
+
+        /* BARRA PROMOCIONAL */
+        .promo-bar {
+            background: linear-gradient(135deg, #05326F, #4facfe);
+            text-align: center;
+            color: white;
+            padding: 12px 10px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            font-size: 15px;
+            position: relative;
+            z-index: 5;
+        }
+
+        .promo-bar span {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            min-width: 75px;
+        }
+
+        /* BANNER */
+        .banner {
+            background: url('assets/img/banner_navidad.png') no-repeat center center/cover;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: white;
+            text-align: center;
+            position: relative;
+        }
+
+        .banner h1 {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 0 0 12px rgba(79, 172, 254, 0.6);
+        }
+
+        .banner p {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 25px;
+            font-size: 16px;
+        }
+
+        .banner button {
+            background: linear-gradient(135deg, #05326F, #4facfe);
+            border: none;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .banner button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(79, 172, 254, 0.5);
+        }
+
+        /* CATEGORÍAS */
+        .categorias {
+            padding: 40px 60px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .categoria-card {
+            flex: 1 1 calc(20% - 20px);
+            min-width: 180px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            text-align: center;
+            padding: 20px 10px;
+            transition: 0.3s;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-decoration: none;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .categoria-card:hover {
+            background: rgba(79, 172, 254, 0.1);
+            transform: translateY(-5px);
+        }
+
+        .categoria-card i {
+            font-size: 28px;
+            color: #4facfe;
+            margin-bottom: 10px;
+        }
+
+        .categoria-card p {
+            font-size: 16px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* PRODUCTOS */
+        .productos {
+            padding: 40px 60px;
+        }
+
+        .productos h2 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-shadow: 0 0 8px rgba(79, 172, 254, 0.4);
+        }
+
+        .grid-productos {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 25px;
+        }
+
+        .producto-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: 0.3s;
+        }
+
+        .producto-card:hover {
+            background: rgba(79, 172, 254, 0.08);
+            transform: translateY(-4px);
+        }
+
+        .producto-card img {
+            width: 100%;
+            border-radius: 10px;
+            height: 180px;
+            object-fit: cover;
+            margin-bottom: 10px;
+        }
+
+        .producto-card h3 {
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: #fff;
+        }
+
+        .producto-card p {
+            color: #4facfe;
+            font-weight: 600;
+        }
+
+        /* 🛒 Contador del carrito */
+        #cart-count {
+            background: #4facfe;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            border-radius: 50%;
+            padding: 3px 7px;
+            position: relative;
+            top: -10px;
+            right: 10px;
+        }
+
+
+        /* ============ FOOTER ============ */
+        .footer {
+            background: rgba(255, 255, 255, 0.03);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            color: #ccc;
+            text-align: center;
+            padding: 40px 20px 20px;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            max-width: 1000px;
+            margin: 0 auto 20px;
+            gap: 20px;
+        }
+
+        .footer-left {
+            flex: 1;
+            min-width: 250px;
+            text-align: left;
+        }
+
+        .footer-logo {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 26px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(79, 172, 254, 0.4);
+        }
+
+        .footer-left p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: flex-end;
+            align-items: center;
+            min-width: 200px;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: #4facfe;
+            text-shadow: 0 0 8px rgba(79, 172, 254, 0.5);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 15px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        /* === MENÚ DE USUARIO === */
+.user-menu {
+  position: relative;
+}
+
+.user-menu a {
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.user-menu a:hover {
+  color: #4facfe;
+}
+
+/* 🔽 Dropdown */
+.dropdown {
+  display: none;
+  position: absolute;
+  top: 45px;
+  right: 0;
+  background: rgba(30, 35, 45, 0.95);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  min-width: 160px;
+  z-index: 20;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.dropdown a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 15px;
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.dropdown a:hover {
+  background: rgba(79, 172, 254, 0.1);
+  color: #4facfe;
+}
+
+.dropdown i {
+  width: 18px;
+  text-align: center;
+}
+
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .footer-left {
+                text-align: center;
+            }
+
+            .footer-links {
+                justify-content: center;
+            }
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .search-bar {
+                display: none;
+            }
+
+            .categorias,
+            .productos {
+                padding: 30px 20px;
+            }
+
+            .promo-bar {
+                flex-direction: column;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 768px) {
+    .grid-productos {
+        grid-template-columns: repeat(2, 1fr); /* En tablets */
+    }
+}
+
+@media (max-width: 480px) {
+    .grid-productos {
+        grid-template-columns: 1fr; /* En celulares */
+    }
+    }
+    </style>
+</head>
+
+<body>
+    <!-- HEADER -->
+    <header>
+        <div class="logo">NEXU</div>
+        <div class="search-bar">
+            <input type="text" placeholder="Buscar productos..." />
+            <i class="fa-solid fa-magnifying-glass"></i>
+        </div>
+        <nav>
+  <ul>
+    <li><a href="index.html">Inicio</a></li>
+    <li><a href="https://www.notion.so/Centro-de-Ayuda-NEXU-2cbfd741b84280f29483c8c05a97c193?source=copy_link">Centro de Ayuda</a></li>
+
+    <!-- 🔹 Icono de usuario con menú desplegable -->
+    <li class="user-menu">
+      <a href="#" id="user-icon"><i class="fa-solid fa-user"></i></a>
+      <div class="dropdown" id="user-dropdown">
+        <!-- El contenido se rellena dinámicamente con JS -->
+      </div>
+    </li>
+
+    <li>
+      <a href="carrito.html" class="carrito-link">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <span id="cart-count">0</span>
+      </a>
+    </li>
+  </ul>
+</nav>
+
+    </header>
+
+    <!-- BARRA PROMOCIONAL -->
+    <div class="promo-bar">
+  ¡La promo termina en: 
+  <i class="fa-regular fa-clock" style="margin: 0 5px; color: #fff;"></i>
+  <span id="timer">00:00:00</span>
+</div>
+
+
+    <!-- BANNER -->
+    <section class="banner">
+        <h1>La Magia de la Navidad Está Aquí</h1>
+        <p>Descubre la nueva era de la tecnología con Nexu. Productos únicos, ofertas increíbles.</p>
+        <button>Explorar ofertas</button>
+    </section>
+
+    <!-- CATEGORÍAS -->
+    <section class="categorias">
+        <a href="#ofertas" class="categoria-card"><i class="fa-solid fa-fire"></i>
+            <p>Ofertas</p>
+        </a>
+        <a href="#laptops" class="categoria-card"><i class="fa-solid fa-laptop"></i>
+            <p>Laptops</p>
+        </a>
+        <a href="#audio" class="categoria-card"><i class="fa-solid fa-headphones"></i>
+            <p>Audio</p>
+        </a>
+        <a href="#smartphones" class="categoria-card"><i class="fa-solid fa-mobile-screen"></i>
+            <p>Smartphones</p>
+        </a>
+        <a href="#hogar" class="categoria-card"><i class="fa-solid fa-house"></i>
+            <p>Hogar</p>
+        </a>
+        <a href="#gaming" class="categoria-card"><i class="fa-solid fa-gamepad"></i>
+            <p>Gaming</p>
+        </a>
+    </section>
+
+    <!-- OFERTAS DESTACADAS -->
+    <section class="productos" id="ofertas">
+        <h2>Ofertas Destacadas</h2>
+        <div class="grid-productos">
+            <div class="producto-card">
+                <img src="https://images.unsplash.com/photo-1580910051073-d708c48d67eb" alt="Smartphone">
+                <h3>Smartphone Nexu One</h3>
+                <p>$499</p>
+            </div>
+            <div class="producto-card">
+                <img src="https://images.unsplash.com/photo-1616628182507-3e6d5b7b3cb3" alt="Audífonos">
+                <h3>Audífonos Nexu SoundX</h3>
+                <p>$199</p>
+            </div>
+            <div class="producto-card">
+                <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8" alt="Laptop">
+                <h3>Laptop Nexu Pro 14"</h3>
+                <p>$899</p>
+            </div>
+            <div class="producto-card">
+                <img src="https://images.unsplash.com/photo-1584575732412-bf75a2b058ff" alt="Gaming Mouse">
+                <h3>Gaming Mouse Nexu</h3>
+                <p>$50</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Laptops -->
+    <section class="productos" id="laptops">
+        <h2>Laptops</h2>
+        <div class="grid-productos">
+            <div class="producto-card">
+                <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8" alt="Laptop Nexu">
+                <h3>Laptop Nexu Pro 14"</h3>
+                <p>$899</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Audio -->
+    <section class="productos" id="audio">
+        <h2>Audio</h2>
+        <div class="grid-productos">
+            <div class="producto-card">
+                <img src="https://images.unsplash.com/photo-1616628182507-3e6d5b7b3cb3" alt="Audífonos">
+                <h3>Audífonos Nexu SoundX</h3>
+                <p>$199</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Smartphones -->
+    <section class="productos" id="smartphones">
+        <h2>Smartphones</h2>
+        <div class="grid-productos">
+            <div class="producto-card">
+                <img src="https://images.unsplash.com/photo-1580910051073-d708c48d67eb" alt="Smartphone Nexu">
+                <h3>Smartphone Nexu One</h3>
+                <p>$499</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Hogar -->
+    <section class="productos" id="hogar">
+        <h2>Hogar</h2>
+        <div class="grid-productos">
+            <div class="producto-card">
+                <img src="https://images.unsplash.com/photo-1581091870627-3a6cc04c94a6" alt="Hogar Nexu">
+                <h3>Smartwatch Nexu Fit</h3>
+                <p>$149</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gaming -->
+    <section class="productos" id="gaming">
+        <h2>Gaming</h2>
+        <div class="grid-productos">
+            <div class="producto-card">
+                <img src="https://images.unsplash.com/photo-1584575732412-bf75a2b058ff" alt="Gaming Nexu">
+                <h3>Gaming Mouse Nexu</h3>
+                <p>$50</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-left">
+                <h2 class="footer-logo">NEXU</h2>
+                <p>Innovación, diseño y tecnología para impulsar tu negocio al siguiente nivel.</p>
+            </div>
+
+            <div class="footer-links">
+                <a href="https://www.notion.so/INFORMACI-N-LEGAL-Y-ATENCI-N-AL-CLIENTE-2cbfd741b842801c8ad1deefea9e1c96?source=copy_link">Condiciones de uso</a>
+                <a href="https://www.notion.so/INFORMACI-N-LEGAL-Y-ATENCI-N-AL-CLIENTE-2cbfd741b842801c8ad1deefea9e1c96?source=copy_link">Privacidad</a>
+                <a href="https://www.notion.so/INFORMACI-N-LEGAL-Y-ATENCI-N-AL-CLIENTE-2cbfd741b842801c8ad1deefea9e1c96?source=copy_link">Soporte</a>
+                <a href="https://www.notion.so/INFORMACI-N-LEGAL-Y-ATENCI-N-AL-CLIENTE-2cbfd741b842801c8ad1deefea9e1c96?source=copy_link">Contáctanos</a>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>© 2025 Nexu Technologies. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+   <script>
+  // 🕓 Temporizador
+  function iniciarTemporizador(duracionHoras) {
+    let tiempoRestante = duracionHoras * 60 * 60;
+    const timerEl = document.getElementById("timer");
+
+    setInterval(() => {
+      const horas = String(Math.floor(tiempoRestante / 3600)).padStart(2, "0");
+      const minutos = String(Math.floor((tiempoRestante % 3600) / 60)).padStart(2, "0");
+      const segundos = String(tiempoRestante % 60).padStart(2, "0");
+
+      timerEl.textContent = `${horas}:${minutos}:${segundos}`;
+      if (tiempoRestante > 0) tiempoRestante--;
+      else timerEl.textContent = "00:00:00";
+    }, 1000);
+  }
+  iniciarTemporizador(4);
+
+  let productos = [];
+
+  // 📦 CARGAR PRODUCTOS DESDE EL BACK
+  async function cargarProductos() {
+    try {
+      const response = await fetch("http://localhost:4000/api/productos");
+      productos = await response.json();
+
+      if (!response.ok) {
+        console.error("Error del servidor:", productos.message);
+        return;
+      }
+
+      const secciones = {
+        ofertas: document.querySelector("#ofertas .grid-productos"),
+        laptops: document.querySelector("#laptops .grid-productos"),
+        audio: document.querySelector("#audio .grid-productos"),
+        smartphones: document.querySelector("#smartphones .grid-productos"),
+        hogar: document.querySelector("#hogar .grid-productos"),
+        gaming: document.querySelector("#gaming .grid-productos"),
+      };
+
+      Object.values(secciones).forEach(sec => sec.innerHTML = "");
+
+      // 🔹 Mostrar solo las últimas 6 en cada sección
+      const categorias = Object.keys(secciones);
+      categorias.forEach(cat => {
+        let filtrados = [];
+
+        if (cat === "ofertas") {
+          filtrados = productos.filter(p => p.es_oferta);
+        } else {
+          filtrados = productos.filter(p => p.categoria && p.categoria.toLowerCase() === cat);
+        }
+
+        // Ordenar por más recientes (últimos agregados)
+        filtrados = filtrados.slice(-6);
+
+        // Renderizar las 6
+        filtrados.forEach(prod => {
+          secciones[cat].appendChild(crearCardProducto(prod));
+        });
+
+        // 🔸 Botón “Mostrar todos”
+        if (productos.some(p => p.categoria && p.categoria.toLowerCase() === cat || (cat === "ofertas" && p.es_oferta))) {
+          const btn = document.createElement("p");
+          btn.textContent = "Mostrar todos";
+          btn.style = `
+            text-align:center;
+            margin-top:20px;
+            color:#4facfe;
+            cursor:pointer;
+            font-weight:600;
+            transition:0.3s;
+          `;
+          btn.addEventListener("mouseover", () => btn.style.textShadow = "0 0 10px rgba(79,172,254,0.8)");
+          btn.addEventListener("mouseout", () => btn.style.textShadow = "none");
+
+          btn.addEventListener("click", () => mostrarTodos(cat, secciones[cat], btn));
+          secciones[cat].parentElement.appendChild(btn);
+        }
+      });
+
+      activarBuscador();
+    } catch (error) {
+      console.error("Error de conexión con el backend:", error);
+    }
+  }
+
+  // 🧩 Crear tarjeta de producto
+  function crearCardProducto(prod) {
+    const card = document.createElement("div");
+    card.classList.add("producto-card");
+
+    const precioMostrar = prod.es_oferta && prod.precio_oferta
+      ? `<p><span style="text-decoration:line-through; color:gray;">$${prod.precio}</span> 
+           <span style="color:#4facfe; font-weight:bold;">$${prod.precio_oferta}</span></p>`
+      : `<p>$${prod.precio}</p>`;
+
+    card.innerHTML = `
+      <img src="${prod.imagen || 'https://via.placeholder.com/300x200?text=Sin+Imagen'}" alt="${prod.nombre}">
+      <h3>${prod.nombre}</h3>
+      ${precioMostrar}
+    `;
+
+    card.addEventListener("click", () => {
+      window.location.href = `producto.html?id=${prod.id}`;
+    });
+
+    return card;
+  }
+
+  // 🔹 Mostrar todos los productos de una categoría
+  function mostrarTodos(cat, contenedor, boton) {
+    contenedor.innerHTML = "";
+    const todos = cat === "ofertas"
+      ? productos.filter(p => p.es_oferta)
+      : productos.filter(p => p.categoria && p.categoria.toLowerCase() === cat);
+
+    todos.forEach(prod => contenedor.appendChild(crearCardProducto(prod)));
+    boton.remove();
+  }
+
+  // 🔍 BUSCADOR EN VIVO
+  function activarBuscador() {
+    const inputBusqueda = document.querySelector(".search-bar input");
+    let seccionResultados = document.getElementById("resultados-busqueda");
+
+    if (!seccionResultados) {
+      seccionResultados = document.createElement("section");
+      seccionResultados.classList.add("productos");
+      seccionResultados.id = "resultados-busqueda";
+      document.body.insertBefore(seccionResultados, document.querySelector(".footer"));
+    }
+
+    const titulo = document.createElement("h2");
+    titulo.textContent = "Resultados de tu búsqueda";
+    const grid = document.createElement("div");
+    grid.classList.add("grid-productos");
+    seccionResultados.appendChild(titulo);
+    seccionResultados.appendChild(grid);
+    seccionResultados.style.display = "none";
+
+    inputBusqueda.addEventListener("input", e => {
+      const termino = e.target.value.trim().toLowerCase();
+      grid.innerHTML = "";
+
+      if (!termino) {
+        seccionResultados.style.display = "none";
+        return;
+      }
+
+      const resultados = productos.filter(p =>
+        p.nombre.toLowerCase().includes(termino)
+      );
+
+      if (resultados.length === 0) {
+        grid.innerHTML = `<p style="color:gray; text-align:center; grid-column:1/-1;">No se encontraron coincidencias para "${termino}".</p>`;
+      } else {
+        resultados.forEach(prod => {
+          grid.appendChild(crearCardProducto(prod));
+        });
+      }
+
+      seccionResultados.style.display = "block";
+      seccionResultados.scrollIntoView({ behavior: "smooth" });
+    });
+  }
+
+  // 🛒 CONTADOR DE CARRITO
+  function actualizarContadorCarrito() {
+    const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+    const countEl = document.getElementById("cart-count");
+    if (countEl) countEl.textContent = carrito.length;
+  }
+
+  window.addEventListener("DOMContentLoaded", () => {
+    cargarProductos();
+    actualizarContadorCarrito();
+  });
+</script>
+
+<script>
+  (function cargarUsuarioNavbar() {
+    const usuario = localStorage.getItem("usuario");
+
+    // Si NO hay usuario, no hacemos nada
+    if (!usuario) return;
+
+    try {
+      const user = JSON.parse(usuario);
+      const nav = document.querySelector("nav ul");
+
+      const item = document.createElement("li");
+      item.innerHTML = `
+        <span style="color:#4facfe; font-weight:500;">
+          Hola, ${user.nombre}
+        </span>
+      `;
+
+      nav.appendChild(item);
+    } catch (err) {
+      console.warn("Usuario inválido en localStorage");
+    }
+  })();
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const userIcon = document.getElementById("user-icon");
+  const dropdown = document.getElementById("user-dropdown");
+  const usuario = JSON.parse(localStorage.getItem("usuario"));
+  const token = localStorage.getItem("token");
+
+  dropdown.innerHTML = "";
+
+  if (usuario && token) {
+
+    // 🔹 Opción Mis pedidos
+    let menuHTML = `
+      <a href="pedidos.html">
+        <i class="fa-solid fa-box"></i> Mis pedidos
+      </a>
+    `;
+
+    // 🟢 SOLO SI ES ADMIN
+    if (usuario.rol === "admin") {
+      menuHTML += `
+        <a href="admin.html" style="color:#3ecf8e; font-weight:600;">
+          <i class="fa-solid fa-screwdriver-wrench"></i> Administrar
+        </a>
+      `;
+    }
+
+    // 🔻 Cerrar sesión
+    menuHTML += `
+      <a href="#" id="logout">
+        <i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión
+      </a>
+    `;
+
+    dropdown.innerHTML = menuHTML;
+
+  } else {
+    dropdown.innerHTML = `
+      <a href="login.html">
+        <i class="fa-solid fa-right-to-bracket"></i> Iniciar sesión
+      </a>
+    `;
+  }
+
+  // Mostrar / ocultar dropdown
+  userIcon.addEventListener("click", (e) => {
+    e.preventDefault();
+    dropdown.style.display =
+      dropdown.style.display === "block" ? "none" : "block";
+  });
+
+  // Cerrar al hacer click fuera
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest(".user-menu")) {
+      dropdown.style.display = "none";
+    }
+  });
+
+  // Cerrar sesión
+  document.getElementById("logout")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    localStorage.removeItem("usuario");
+    localStorage.removeItem("token");
+    window.location.href = "login.html";
+  });
+});
+</script>
+
+</body>
+
+</html>

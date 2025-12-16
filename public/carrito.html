@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexu | Carrito de Compras</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700&display=swap" rel="stylesheet" />
+
+    <style>
+        body {
+            background: #0d1117;
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        /* Fondo de estrellas */
+        #galaxy-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: #f1f1f1;
+            text-shadow: 0 0 10px rgba(79, 172, 254, 0.5);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+
+        nav a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.3s;
+        }
+
+        nav a:hover {
+            color: #4facfe;
+        }
+
+        #cart-count {
+            background: #4facfe;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            border-radius: 50%;
+            padding: 3px 7px;
+            position: relative;
+            top: -10px;
+            right: 10px;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            padding: 0 20px;
+            z-index: 5;
+            position: relative;
+        }
+
+        .carrito-lista {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 0 20px rgba(79, 172, 254, 0.1);
+        }
+
+        h1 {
+            color: #cbcccd;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(79, 172, 254, 0.4);
+        }
+
+        .producto-carrito {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px 0;
+        }
+
+        .producto-img {
+            width: 90px;
+            height: 90px;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .producto-info {
+            flex: 1;
+            margin-left: 20px;
+        }
+
+        .producto-info h3 {
+            font-size: 16px;
+            color: #fff;
+        }
+
+        .producto-info p {
+            color: #4facfe;
+            font-weight: 600;
+        }
+
+        .btn-cantidad,
+        .btn-eliminar {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-cantidad:hover {
+            background: #4facfe;
+        }
+
+        .btn-eliminar:hover {
+            color: #ff5c5c;
+            transform: scale(1.1);
+        }
+
+        .resumen {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 0 15px rgba(79, 172, 254, 0.15);
+            margin-bottom: 25px;
+        }
+
+        .resumen-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .resumen-item.total {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 10px;
+            color: #4facfe;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        /* 💳 Tarjeta de pago */
+        .pago-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 0 15px rgba(79, 172, 254, 0.15);
+        }
+
+        .pago-card h2 {
+            color: #e6e7e8;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 5px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 15px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 8px rgba(79, 172, 254, 0.4);
+        }
+
+        .card-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-pagar {
+            width: 100%;
+            margin-top: 15px;
+            background: linear-gradient(135deg, #05326F, #4facfe);
+            color: white;
+            border: none;
+            padding: 12px 0;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .btn-pagar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 12px rgba(79, 172, 254, 0.5);
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: rgba(255, 255, 255, 0.6);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* === MENÚ DE USUARIO === */
+.user-menu {
+  position: relative;
+}
+
+.user-menu a {
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.user-menu a:hover {
+  color: #4facfe;
+}
+
+/* 🔽 Dropdown */
+.dropdown {
+  display: none;
+  position: absolute;
+  top: 45px;
+  right: 0;
+  background: rgba(30, 35, 45, 0.95);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  min-width: 160px;
+  z-index: 20;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.dropdown a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 15px;
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.dropdown a:hover {
+  background: rgba(79, 172, 254, 0.1);
+  color: #4facfe;
+}
+
+.dropdown i {
+  width: 18px;
+  text-align: center;
+}
+
+
+        @media (max-width: 900px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="galaxy-canvas"></canvas>
+
+    <header>
+        <div class="logo">NEXU</div>
+        <nav>
+  <ul>
+    <li><a href="index.html">Inicio</a></li>
+    <li><a href="https://www.notion.so/Centro-de-Ayuda-NEXU-2cbfd741b84280f29483c8c05a97c193?source=copy_link">Centro de Ayuda</a></li>
+
+    <!-- 🔹 Icono de usuario con menú desplegable -->
+    <li class="user-menu">
+      <a href="#" id="user-icon"><i class="fa-solid fa-user"></i></a>
+      <div class="dropdown" id="user-dropdown">
+        <!-- El contenido se rellena dinámicamente con JS -->
+      </div>
+    </li>
+
+    <li>
+      <a href="carrito.html" class="carrito-link">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <span id="cart-count">0</span>
+      </a>
+    </li>
+  </ul>
+</nav>
+
+    </header>
+
+    <div class="main-container">
+        <div class="carrito-lista">
+            <h1>Carrito de compras</h1>
+            <div id="lista-carrito"></div>
+        </div>
+
+        <div>
+            <div class="resumen">
+                <h2>Resumen de compra</h2>
+                <div class="resumen-item"><span>Subtotal:</span><span id="subtotal">$0.00</span></div>
+                <div class="resumen-item"><span>IVA (15%):</span><span id="iva">$0.00</span></div>
+                <div class="resumen-item total"><span>Total:</span><span id="total">$0.00</span></div>
+            </div>
+
+            <!-- 💳 FORMULARIO DE PAGO -->
+            <!-- 💳 FORMULARIO DE PAGO CON PREVISUALIZACIÓN -->
+            <div class="pago-card">
+                <h2>Datos para el pago</h2>
+
+                <!-- 🪄 Tarjeta visual -->
+                <div class="tarjeta-visual" id="tarjeta">
+                    <div class="tarjeta-frontal">
+                        <div class="chip"></div>
+                        <div class="numero-tarjeta" id="vista-numero">XXXX XXXX XXXX XXXX</div>
+                        <div class="nombre-tarjeta" id="vista-nombre">NOMBRE DEL TITULAR</div>
+                        <div class="expira-tarjeta" id="vista-expira">MM/AA</div>
+                    </div>
+                </div>
+
+                <!-- 🧾 Formulario -->
+                <form id="form-pago">
+                    <div class="input-group">
+                        <label>Nombre del Titular</label>
+                        <input type="text" id="nombre" required placeholder="Nombre del Titular">
+                    </div>
+                    <div class="input-group">
+                        <label>Número de Tarjeta</label>
+                        <input type="text" id="numero" maxlength="16" required placeholder="XXXX XXXX XXXX XXXX">
+                    </div>
+                    <div class="card-row">
+                        <div class="input-group" style="flex:1;">
+                            <label>Expiración (MM/AA)</label>
+                            <input type="text" id="expira" maxlength="5" required placeholder="12/29">
+                        </div>
+                        <div class="input-group" style="flex:1;">
+                            <label>CVV</label>
+                            <input type="password" id="cvv" maxlength="3" required placeholder="***">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-pagar">Pagar ahora</button>
+                </form>
+            </div>
+
+            <style>
+                /* ===== 💳 TARJETA VISUAL ===== */
+                .tarjeta-visual {
+                    width: 100%;
+                    height: 200px;
+                    border-radius: 20px;
+                    margin: 15px auto 55px;
+                    perspective: 1000px;
+                }
+
+                .tarjeta-frontal {
+                    background: linear-gradient(135deg, #05326F, #4facfe);
+                    border-radius: 20px;
+                    padding: 20px;
+                    height: 100%;
+                    position: relative;
+                    color: white;
+                    box-shadow: 0 0 20px rgba(79, 172, 254, 0.3);
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between;
+                    transform-style: preserve-3d;
+                    transform: rotateY(0deg);
+                    transition: transform 0.6s ease;
+                }
+
+                .tarjeta-frontal:hover {
+                    transform: rotateY(10deg) scale(1.02);
+                }
+
+
+                .chip {
+                    width: 50px;
+                    height: 35px;
+                    background: linear-gradient(135deg, #ffd700, #b8860b);
+                    border-radius: 8px;
+                }
+
+                .numero-tarjeta {
+                    font-size: 20px;
+                    letter-spacing: 2px;
+                    text-align: center;
+                    margin-top: 15px;
+                }
+
+                .nombre-tarjeta {
+                    font-size: 14px;
+                    text-transform: uppercase;
+                }
+
+                .expira-tarjeta {
+                    font-size: 14px;
+                    position: absolute;
+                    bottom: 20px;
+                    right: 25px;
+                }
+
+                .marca-tarjeta {
+                    position: absolute;
+                    bottom: 20px;
+                    left: 25px;
+                    font-weight: bold;
+                    font-size: 18px;
+                    letter-spacing: 2px;
+                    color: rgba(255, 255, 255, 0.9);
+                }
+
+                /* Efecto de brillo */
+                .tarjeta-frontal::after {
+                    content: "";
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    border-radius: 20px;
+                    background: linear-gradient(120deg, rgba(255, 255, 255, 0.1), transparent, rgba(255, 255, 255, 0.1));
+                    pointer-events: none;
+                    animation: shine 3s infinite;
+                }
+
+                @keyframes shine {
+                    0% {
+                        transform: translateX(-100%) rotate(25deg);
+                        opacity: 0;
+                    }
+
+                    50% {
+                        transform: translateX(100%) rotate(25deg);
+                        opacity: 0.6;
+                    }
+
+                    100% {
+                        transform: translateX(200%) rotate(25deg);
+                        opacity: 0;
+                    }
+                }
+
+                /* ===== 🌀 LOADER DE PAGO ===== */
+                .loader-overlay {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(13, 17, 23, 0.95);
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    flex-direction: column;
+                    z-index: 9999;
+                }
+
+                .loader-box p {
+                    color: #4facfe;
+                    font-size: 18px;
+                    margin-top: 15px;
+                    letter-spacing: 1px;
+                }
+
+                .spinner {
+                    width: 70px;
+                    height: 70px;
+                    border: 5px solid rgba(255, 255, 255, 0.1);
+                    border-top: 5px solid #4facfe;
+                    border-radius: 50%;
+                    animation: spin 1s linear infinite;
+                }
+
+                @keyframes spin {
+                    0% {
+                        transform: rotate(0deg);
+                    }
+
+                    100% {
+                        transform: rotate(360deg);
+                    }
+                }
+            </style>
+
+            <script>
+                // === 💳 ANIMACIÓN EN TIEMPO REAL DE LA TARJETA ===
+                const inputNumero = document.getElementById("numero");
+                const inputNombre = document.getElementById("nombre");
+                const inputExpira = document.getElementById("expira");
+
+                const vistaNumero = document.getElementById("vista-numero");
+                const vistaNombre = document.getElementById("vista-nombre");
+                const vistaExpira = document.getElementById("vista-expira");
+                const marcaTarjeta = document.getElementById("marca-tarjeta");
+
+                // Formatear número y detectar marca
+                inputNumero.addEventListener("input", e => {
+                    let valor = e.target.value.replace(/\D/g, "").substring(0, 16);
+                    valor = valor.replace(/(.{4})/g, "$1 ").trim();
+                    vistaNumero.textContent = valor || "XXXX XXXX XXXX XXXX";
+
+                    if (valor.startsWith("4")) marcaTarjeta.textContent = "VISA";
+                    else if (valor.startsWith("5")) marcaTarjeta.textContent = "MASTERCARD";
+                    else marcaTarjeta.textContent = "NEXU CARD";
+                });
+
+                // Mostrar nombre en mayúsculas
+                inputNombre.addEventListener("input", e => {
+                    vistaNombre.textContent = e.target.value.toUpperCase() || "NOMBRE DEL TITULAR";
+                });
+
+                // Actualizar fecha
+                inputExpira.addEventListener("input", e => {
+                    vistaExpira.textContent = e.target.value || "MM/AA";
+                });
+            </script>
+
+        </div>
+    </div>
+
+    <footer>© 2025 Nexu Technologies. Todos los derechos reservados.</footer>
+
+    <!-- Fondo de estrellas -->
+    <script>
+        const canvas = document.getElementById('galaxy-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height, stars = [];
+        const numStars = 150;
+        function resize() { width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height; }
+        class Star {
+            constructor() { this.reset(); }
+            reset() { this.x = Math.random() * width; this.y = Math.random() * height; this.size = Math.random() * 2; this.speed = Math.random() * 0.5 + 0.1; this.opacity = Math.random(); this.fadeDir = 0.01; }
+            update() { this.y -= this.speed; this.opacity += this.fadeDir; if (this.opacity >= 1 || this.opacity <= 0.2) this.fadeDir = -this.fadeDir; if (this.y < 0) { this.y = height; this.x = Math.random() * width; } }
+            draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = `rgba(255,255,255,${this.opacity})`; ctx.fill(); }
+        }
+        function animateStars() { ctx.clearRect(0, 0, width, height); stars.forEach(s => { s.update(); s.draw(); }); requestAnimationFrame(animateStars); }
+        function initStars() { resize(); for (let i = 0; i < numStars; i++) stars.push(new Star()); animateStars(); }
+        window.addEventListener("resize", resize); initStars();
+    </script>
+
+    <!-- Carrito y pago -->
+    <script>
+        function actualizarContadorCarrito() {
+            const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+            document.getElementById("cart-count").textContent = carrito.length;
+        }
+
+        async function cargarCarrito() {
+            const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+            const contenedor = document.getElementById("lista-carrito");
+            contenedor.innerHTML = "";
+            if (carrito.length === 0) {
+                contenedor.innerHTML = "<p style='text-align:center;color:gray;'>Tu carrito está vacío 🛒</p>";
+                document.getElementById("subtotal").textContent = "$0.00";
+                document.getElementById("iva").textContent = "$0.00";
+                document.getElementById("total").textContent = "$0.00";
+                return;
+            }
+            let subtotal = 0;
+            for (const item of carrito) {
+                const res = await fetch(`http://localhost:4000/api/productos/${item.id}`);
+                const prod = await res.json();
+                const precio = prod.es_oferta && prod.precio_oferta ? prod.precio_oferta : prod.precio;
+                const cantidad = item.cantidad || 1;
+                subtotal += precio * cantidad;
+                const div = document.createElement("div");
+                div.classList.add("producto-carrito");
+                div.innerHTML = `
+          <img src="${prod.imagen}" class="producto-img">
+          <div class="producto-info">
+            <h3>${prod.nombre}</h3>
+            ${prod.es_oferta ? `<span style='color:red;font-size:13px;'>Oferta</span>` : ""}
+            <p>$${precio}</p>
+            <div class="controles">
+              <button class="btn-cantidad" onclick="cambiarCantidad(${prod.id}, -1)">-</button>
+              <span>${cantidad}</span>
+              <button class="btn-cantidad" onclick="cambiarCantidad(${prod.id}, 1)">+</button>
+              <button class="btn-eliminar" onclick="eliminarDelCarrito(${prod.id})"><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </div>
+          <strong style="color:#4facfe;">$${(precio * cantidad).toFixed(2)}</strong>
+        `;
+                contenedor.appendChild(div);
+            }
+            const iva = subtotal * 0.15;
+            const total = subtotal + iva;
+            document.getElementById("subtotal").textContent = "$" + subtotal.toFixed(2);
+            document.getElementById("iva").textContent = "$" + iva.toFixed(2);
+            document.getElementById("total").textContent = "$" + total.toFixed(2);
+        }
+
+        function cambiarCantidad(id, delta) {
+            let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+            const item = carrito.find(p => p.id === id);
+            if (item) { item.cantidad = (item.cantidad || 1) + delta; if (item.cantidad < 1) item.cantidad = 1; }
+            localStorage.setItem("carrito", JSON.stringify(carrito));
+            cargarCarrito();
+            actualizarContadorCarrito();
+        }
+
+        function eliminarDelCarrito(id) {
+            let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+            carrito = carrito.filter(p => p.id !== id);
+            localStorage.setItem("carrito", JSON.stringify(carrito));
+            cargarCarrito();
+            actualizarContadorCarrito();
+        }
+
+       // === PROCESAR PAGO CON LOADER ===
+// === PROCESAR PAGO CON BACKEND ===
+document.getElementById("form-pago").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+    // ================= VALIDACIONES DE TARJETA =================
+  const nombre = document.getElementById("nombre").value.trim();
+  const numero = document.getElementById("numero").value.replace(/\s+/g, "");
+  const expira = document.getElementById("expira").value.trim();
+  const cvv = document.getElementById("cvv").value.trim();
+
+  // Nombre
+  if (!/^[a-zA-ZÁÉÍÓÚáéíóúñÑ\s]+$/.test(nombre)) {
+    alert("Nombre del titular inválido");
+    return;
+  }
+
+  // Número de tarjeta
+  if (!/^\d{16}$/.test(numero)) {
+    alert("La tarjeta debe tener 16 dígitos");
+    return;
+  }
+
+  // Expiración MM/AA
+  if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(expira)) {
+    alert("Fecha de expiración inválida (MM/AA)");
+    return;
+  }
+
+  // CVV
+  if (!/^\d{3}$/.test(cvv)) {
+    alert("CVV inválido");
+    return;
+  }
+
+  const loader = document.createElement("div");
+  loader.classList.add("loader-overlay");
+  loader.innerHTML = `
+    <div class="loader-box">
+      <div class="spinner"></div>
+      <p>Procesando tu pago...</p>
+    </div>
+  `;
+  document.body.appendChild(loader);
+
+  try {
+    // 🧾 Obtener usuario logueado
+    const usuario = JSON.parse(localStorage.getItem("usuario"));
+    if (!usuario) {
+      alert("Debes iniciar sesión para comprar.");
+      loader.remove();
+      return;
+    }
+
+    const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+    if (carrito.length === 0) {
+      alert("Tu carrito está vacío.");
+      loader.remove();
+      return;
+    }
+
+    // 🧠 Crear array de items como lo espera el backend
+    const items = carrito.map(p => ({
+      producto_id: p.id,
+      cantidad: p.cantidad || 1
+    }));
+
+    // 💰 Enviar al backend
+    const res = await fetch("http://localhost:4000/api/pedidos", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + localStorage.getItem("token")
+      },
+      body: JSON.stringify({
+        usuario_id: usuario.id,
+        items
+      })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      console.error("Error:", data);
+      alert(data.message || "Error al crear el pedido.");
+      loader.remove();
+      return;
+    }
+
+    console.log("Pedido creado:", data);
+
+    // ✅ Recuperar información completa de los productos
+    const productosDetallados = [];
+    for (const item of carrito) {
+      const resp = await fetch(`http://localhost:4000/api/productos/${item.id}`);
+      const prod = await resp.json();
+
+      const precioFinal = prod.es_oferta && prod.precio_oferta ? prod.precio_oferta : prod.precio;
+
+      productosDetallados.push({
+        nombre: prod.nombre,
+        precio: Number(precioFinal).toFixed(2),
+        cantidad: item.cantidad
+      });
+    }
+
+    // 💾 Guardar datos completos de la compra (para confirmación)
+    localStorage.setItem("ultimaCompra", JSON.stringify(productosDetallados));
+    localStorage.removeItem("carrito");
+
+    setTimeout(() => {
+      window.location.href = "confirmacion.html";
+    }, 2500);
+
+  } catch (error) {
+    console.error("Error al procesar el pago:", error);
+    alert("Ocurrió un error al crear el pedido.");
+    loader.remove();
+  }
+});
+
+
+        window.addEventListener("DOMContentLoaded", () => {
+            cargarCarrito();
+            actualizarContadorCarrito();
+        });
+    </script>
+
+    <script>
+  // 🔒 Protección de rutas
+  (function protegerRuta() {
+    const token = localStorage.getItem("token");
+    const usuario = localStorage.getItem("usuario");
+
+    // Si no hay token o usuario → redirigir
+    if (!token || !usuario) {
+      window.location.replace("login.html");
+      return; // 🔹 importante para detener el resto del script
+    }
+
+    // Si hay sesión, mostrar el nombre del usuario en el header (opcional)
+    try {
+      const user = JSON.parse(usuario);
+      const nav = document.querySelector("nav ul");
+      const item = document.createElement("li");
+      item.innerHTML = `<span style="color:#4facfe;">Hola, ${user.nombre}</span>`;
+      nav.appendChild(item);
+    } catch (err) {
+      console.warn("Error leyendo usuario:", err);
+      window.location.replace("login.html");
+    }
+  })();
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const userIcon = document.getElementById("user-icon");
+  const dropdown = document.getElementById("user-dropdown");
+  const usuario = JSON.parse(localStorage.getItem("usuario"));
+  const token = localStorage.getItem("token");
+
+  dropdown.innerHTML = "";
+
+  if (usuario && token) {
+
+    // 🔹 Opción Mis pedidos
+    let menuHTML = `
+      <a href="pedidos.html">
+        <i class="fa-solid fa-box"></i> Mis pedidos
+      </a>
+    `;
+
+    // 🟢 SOLO SI ES ADMIN
+    if (usuario.rol === "admin") {
+      menuHTML += `
+        <a href="admin.html" style="color:#3ecf8e; font-weight:600;">
+          <i class="fa-solid fa-screwdriver-wrench"></i> Administrar
+        </a>
+      `;
+    }
+
+    // 🔻 Cerrar sesión
+    menuHTML += `
+      <a href="#" id="logout">
+        <i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión
+      </a>
+    `;
+
+    dropdown.innerHTML = menuHTML;
+
+  } else {
+    dropdown.innerHTML = `
+      <a href="login.html">
+        <i class="fa-solid fa-right-to-bracket"></i> Iniciar sesión
+      </a>
+    `;
+  }
+
+  // Mostrar / ocultar dropdown
+  userIcon.addEventListener("click", (e) => {
+    e.preventDefault();
+    dropdown.style.display =
+      dropdown.style.display === "block" ? "none" : "block";
+  });
+
+  // Cerrar al hacer click fuera
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest(".user-menu")) {
+      dropdown.style.display = "none";
+    }
+  });
+
+  // Cerrar sesión
+  document.getElementById("logout")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    localStorage.removeItem("usuario");
+    localStorage.removeItem("token");
+    window.location.href = "login.html";
+  });
+});
+</script>
+
+
+</body>
+
+</html>

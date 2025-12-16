@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexu | Confirmación de Compra</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700&display=swap" rel="stylesheet" />
+
+  <style>
+    body {
+      background: #0d1117;
+      color: white;
+      font-family: 'Montserrat', sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* 🌌 Fondo animado de estrellas */
+    #galaxy-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+    }
+
+    .success-container {
+      text-align: center;
+      background: rgba(255,255,255,0.05);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 0 25px rgba(79,172,254,0.2);
+      animation: fadeIn 1.2s ease;
+      width: 90%;
+      max-width: 600px;
+      z-index: 2;
+      backdrop-filter: blur(10px);
+    }
+
+    /* ✔️ Animación de check */
+    .checkmark {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      display: block;
+      stroke-width: 4;
+      stroke: #4facfe;
+      stroke-miterlimit: 10;
+      box-shadow: 0 0 20px rgba(79,172,254,0.3);
+      margin: 10px auto 20px;
+      background: transparent;
+    }
+
+    .checkmark__circle {
+      stroke-dasharray: 166;
+      stroke-dashoffset: 166;
+      stroke-width: 4;
+      stroke-miterlimit: 10;
+      stroke: #4facfe;
+      fill: none;
+      animation: stroke 0.8s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+    }
+
+    .checkmark__check {
+      transform-origin: 50% 50%;
+      stroke-dasharray: 48;
+      stroke-dashoffset: 48;
+      animation: stroke 0.5s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+    }
+
+    @keyframes stroke { 100% { stroke-dashoffset: 0; } }
+
+    h1 {
+      font-size: 26px;
+      color: #e6e7e8;
+      margin-bottom: 10px;
+    }
+
+    p {
+      color: rgba(255,255,255,0.8);
+      font-size: 15px;
+      margin-top: 8px;
+    }
+
+    h3 {
+      color: #4facfe;
+      margin-top: 25px;
+      font-size: 18px;
+      margin-bottom: 10px;
+      text-shadow: 0 0 10px rgba(79,172,254,0.4);
+    }
+
+    .detalle-compra {
+      background: rgba(255,255,255,0.03);
+      border-radius: 10px;
+      padding: 15px;
+      text-align: left;
+      max-height: 200px;
+      overflow-y: auto;
+      box-shadow: 0 0 10px rgba(79,172,254,0.1);
+    }
+
+    .detalle-compra div {
+      margin-bottom: 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding-bottom: 5px;
+    }
+
+    .btn-container {
+      margin-top: 25px;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .btn-nexu {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #4facfe;
+      font-weight: bold;
+      text-decoration: none;
+      background: rgba(79,172,254,0.1);
+      padding: 10px 25px;
+      border-radius: 30px;
+      transition: 0.3s;
+    }
+
+    .btn-nexu:hover {
+      background: #4facfe;
+      color: white;
+      transform: scale(1.05);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="galaxy-canvas"></canvas>
+
+  <div class="success-container">
+    <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+      <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+      <path class="checkmark__check" fill="none" stroke="#4facfe" stroke-width="4" d="M14 27l7 7 16-16"/>
+    </svg>
+
+    <h1>¡Tu compra ha sido exitosa!</h1>
+    <p>Tu pedido estará listo en <b>4 días hábiles</b> para ser retirado.</p>
+
+    <h3>Detalles de tu pedido</h3>
+    <div class="detalle-compra" id="detalle-compra">
+      <p>Cargando detalle...</p>
+    </div>
+
+    <div class="btn-container">
+      <a href="factura.html" target="_blank" class="btn-nexu" id="btn-factura">
+  <i class="fa-solid fa-download"></i> Descargar factura
+</a>
+
+      <a href="index.html" class="btn-nexu"><i class="fa-solid fa-house"></i> Volver al inicio</a>
+    </div>
+  </div>
+
+  <audio id="success-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.wav"></audio>
+<script>
+  // 💫 Fondo animado de estrellas (igual al login)
+  const canvas = document.getElementById('galaxy-canvas');
+  const ctx = canvas.getContext('2d');
+  let width, height, stars = [];
+  const numStars = 150;
+
+  function resize() {
+    width = window.innerWidth;
+    height = window.innerHeight;
+    canvas.width = width;
+    canvas.height = height;
+  }
+
+  class Star {
+    constructor() { this.reset(); }
+    reset() {
+      this.x = Math.random() * width;
+      this.y = Math.random() * height;
+      this.size = Math.random() * 2;
+      this.speed = Math.random() * 0.5 + 0.1;
+      this.opacity = Math.random();
+      this.fadeDir = 0.01;
+    }
+    update() {
+      this.y -= this.speed;
+      this.opacity += this.fadeDir;
+      if (this.opacity >= 1 || this.opacity <= 0.2) this.fadeDir = -this.fadeDir;
+      if (this.y < 0) { this.y = height; this.x = Math.random() * width; }
+    }
+    draw() {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255,255,255,${this.opacity})`;
+      ctx.fill();
+    }
+  }
+
+  function initStars() {
+    resize();
+    stars = [];
+    for (let i = 0; i < numStars; i++) stars.push(new Star());
+    animateStars();
+  }
+
+  function animateStars() {
+    ctx.clearRect(0, 0, width, height);
+    stars.forEach(s => { s.update(); s.draw(); });
+    requestAnimationFrame(animateStars);
+  }
+
+  window.addEventListener("resize", resize);
+  initStars();
+
+  // 🎵 Sonido con Web Audio API (sin bloqueo de autoplay)
+  function playSuccessSound() {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(880, ctx.currentTime);
+      gain.gain.setValueAtTime(0.2, ctx.currentTime);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.25);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+      osc.stop(ctx.currentTime + 0.3);
+    } catch (e) {
+      console.warn("No se pudo reproducir el sonido", e);
+    }
+  }
+
+  // 🎇 Partículas azules Nexu 💙
+  const particlesCanvas = document.createElement("canvas");
+  particlesCanvas.style.position = "absolute";
+  particlesCanvas.style.top = "50%";
+  particlesCanvas.style.left = "50%";
+  particlesCanvas.style.transform = "translate(-50%, -50%)";
+  particlesCanvas.style.pointerEvents = "none";
+  particlesCanvas.width = 300;
+  particlesCanvas.height = 300;
+  particlesCanvas.style.zIndex = 3;
+  document.body.appendChild(particlesCanvas);
+  const pctx = particlesCanvas.getContext("2d");
+
+  let particles = [];
+
+  function createParticles() {
+    particles = [];
+    for (let i = 0; i < 40; i++) {
+      particles.push({
+        x: 150, y: 150,
+        size: Math.random() * 4 + 2,
+        speedX: (Math.random() - 0.5) * 6,
+        speedY: (Math.random() - 0.5) * 6,
+        alpha: 1
+      });
+    }
+  }
+
+  function drawParticles() {
+    pctx.clearRect(0, 0, 300, 300);
+    particles.forEach(p => {
+      p.x += p.speedX;
+      p.y += p.speedY;
+      p.alpha -= 0.02;
+      pctx.beginPath();
+      pctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      pctx.fillStyle = `rgba(79,172,254,${p.alpha})`;
+      pctx.fill();
+    });
+    particles = particles.filter(p => p.alpha > 0);
+    if (particles.length > 0) requestAnimationFrame(drawParticles);
+  }
+
+  // 🕒 Ejecutar efectos al cargar
+  window.addEventListener("DOMContentLoaded", () => {
+    setTimeout(() => {
+      playSuccessSound();
+      createParticles();
+      drawParticles();
+    }, 1300); // justo cuando termina el ✔️
+  });
+
+  // 🧾 Mostrar detalle de la compra
+  const detalleDiv = document.getElementById("detalle-compra");
+  const compra = JSON.parse(localStorage.getItem("ultimaCompra")) || [];
+
+  if (compra.length === 0) {
+    detalleDiv.innerHTML = "<p>No se encontraron productos.</p>";
+  } else {
+    detalleDiv.innerHTML = "";
+    compra.forEach(p => {
+      const nombre = p.nombre || "Producto sin nombre";
+      const precio = p.precio || "0.00";
+      const cantidad = p.cantidad || 1;
+
+      const item = document.createElement("div");
+      item.innerHTML = `
+        <strong>${nombre}</strong><br>
+        Cantidad: ${cantidad} | Precio: $${precio}
+      `;
+      detalleDiv.appendChild(item);
+    });
+  }
+
+  // 🧹 Limpiar última compra al salir
+  window.addEventListener("beforeunload", () => {
+    localStorage.removeItem("ultimaCompra");
+  });
+</script>
+
+
+</body>
+</html>
