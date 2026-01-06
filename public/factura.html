@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,12 +13,14 @@
       color: #000;
       margin: 30px;
     }
+
     .container {
       width: 800px;
       margin: 0 auto;
       border: 1px solid #000;
       padding: 20px;
     }
+
     .header {
       display: flex;
       justify-content: space-between;
@@ -44,43 +47,57 @@
     .section {
       margin-top: 15px;
     }
+
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 10px;
     }
-    table, th, td {
+
+    table,
+    th,
+    td {
       border: 1px solid #000;
     }
-    th, td {
+
+    th,
+    td {
       padding: 5px;
       text-align: left;
     }
+
     th {
       background-color: #f0f0f0;
     }
+
     .right {
       text-align: right;
     }
+
     .bold {
       font-weight: bold;
     }
+
     .totales {
       margin-top: 10px;
       float: right;
       width: 50%;
     }
+
     .totales td {
       border: none;
     }
+
     .footer {
       margin-top: 50px;
       font-size: 11px;
     }
+
     .barcode {
       text-align: center;
       margin-top: 10px;
     }
+
     .barcode img {
       width: 80%;
     }
@@ -90,6 +107,7 @@
       margin-top: 30px;
       text-align: center;
     }
+
     .btn {
       background: linear-gradient(135deg, #05326F, #4facfe);
       color: #fff;
@@ -101,12 +119,14 @@
       margin: 5px;
       transition: 0.3s;
     }
+
     .btn:hover {
       transform: scale(1.05);
-      box-shadow: 0 0 10px rgba(79,172,254,0.4);
+      box-shadow: 0 0 10px rgba(79, 172, 254, 0.4);
     }
   </style>
 </head>
+
 <body>
 
   <div id="factura" class="container">
@@ -132,12 +152,28 @@
 
     <div class="section">
       <table>
-        <tr><td><b>Nombre:</b></td><td id="nombreCliente"></td></tr>
-        <tr><td><b>Dirección:</b></td><td>Quito - Ecuador</td></tr>
-        <tr><td><b>RUC:</b></td><td>171680642001</td></tr>
-        <tr><td><b>Fecha Emisión:</b></td><td id="fechaEmision"></td></tr>
-        <tr><td><b>Teléfono:</b></td><td>0999670536</td></tr>
+        <tr>
+          <td><b>Nombre:</b></td>
+          <td id="nombreCliente"></td>
+        </tr>
+        <tr>
+          <td><b>Dirección:</b></td>
+          <td id="dirCliente"></td>
+        </tr>
+        <tr>
+          <td><b>RUC:</b></td>
+          <td id="rucCliente"></td>
+        </tr>
+        <tr>
+          <td><b>Fecha Emisión:</b></td>
+          <td id="fechaEmision"></td>
+        </tr>
+        <tr>
+          <td><b>Teléfono:</b></td>
+          <td id="telCliente"></td>
+        </tr>
       </table>
+
     </div>
 
     <div class="section">
@@ -158,16 +194,27 @@
     </div>
 
     <table class="totales">
-      <tr><td class="right">Subtotal:</td><td class="right" id="subtotal">$0.00</td></tr>
-      <tr><td class="right">IVA (15%):</td><td class="right" id="iva">$0.00</td></tr>
-      <tr class="bold"><td class="right">TOTAL:</td><td class="right" id="total">$0.00</td></tr>
+      <tr>
+        <td class="right">Subtotal:</td>
+        <td class="right" id="subtotal">$0.00</td>
+      </tr>
+      <tr>
+        <td class="right">IVA (15%):</td>
+        <td class="right" id="iva">$0.00</td>
+      </tr>
+      <tr class="bold">
+        <td class="right">TOTAL:</td>
+        <td class="right" id="total">$0.00</td>
+      </tr>
     </table>
 
     <div class="footer">
       <b>Forma de Pago:</b> Otros con utilización del sistema financiero — Con vencimiento a 8 días<br>
       <b>Observación:</b> Crédito 8 días
       <div class="barcode">
-        <img src="https://barcode.tec-it.com/barcode.ashx?data=060820250117931077960012001000000005501234567818&code=Code128&dpi=96" alt="Código de barras">
+        <img
+          src="https://barcode.tec-it.com/barcode.ashx?data=060820250117931077960012001000000005501234567818&code=Code128&dpi=96"
+          alt="Código de barras">
       </div>
     </div>
   </div>
@@ -176,31 +223,46 @@
     <button class="btn" onclick="descargarPDF()">⬇️ Descargar PDF</button>
     <button class="btn" onclick="window.print()">🖨️ Imprimir</button>
   </div>
-<script>
-  // === CARGAR DATOS DE LA ÚLTIMA COMPRA ===
-  const compra = JSON.parse(localStorage.getItem("ultimaCompra")) || [];
-  const nombre = localStorage.getItem("nombreCliente") || "Cliente Nexu";
-  const hoy = new Date().toLocaleDateString("es-EC");
+  <script>
 
-  document.getElementById("nombreCliente").textContent = nombre;
-  document.getElementById("fechaEmision").textContent = hoy;
+    // === CARGAR DATOS DE LA ÚLTIMA COMPRA ===
+    const compra = JSON.parse(localStorage.getItem("ultimaCompra")) || [];
+    const datosFacturacion = JSON.parse(localStorage.getItem("datosFacturacion")) || {};
+    const hoy = new Date().toLocaleDateString("es-EC");
 
-  // Generar número de factura consecutivo
-  let numFactura = localStorage.getItem("numFactura") || 550;
-  numFactura++;
-  localStorage.setItem("numFactura", numFactura);
-  document.getElementById("numFactura").textContent = `001-010-000000${numFactura}`;
+    // 🧾 Datos reales del cliente
+    document.getElementById("nombreCliente").textContent =
+      datosFacturacion.cliente_nombre || "Cliente Nexu";
 
-  const cuerpo = document.querySelector("#tablaProductos tbody");
-  let subtotal = 0;
-  compra.forEach((p, i) => {
-    const precio = parseFloat(p.precio || p.producto?.precio || 0);
-    const cantidad = parseInt(p.cantidad || 1);
-    const total = precio * cantidad;
-    subtotal += total;
+    document.getElementById("dirCliente").textContent =
+      datosFacturacion.cliente_direccion || "";
 
-    const fila = document.createElement("tr");
-    fila.innerHTML = `
+    document.getElementById("rucCliente").textContent =
+      datosFacturacion.cliente_cedula || "";
+
+    document.getElementById("telCliente").textContent =
+      datosFacturacion.cliente_telefono || "";
+
+
+    document.getElementById("fechaEmision").textContent = hoy;
+
+
+    // Generar número de factura consecutivo
+    let numFactura = localStorage.getItem("numFactura") || 550;
+    numFactura++;
+    localStorage.setItem("numFactura", numFactura);
+    document.getElementById("numFactura").textContent = `001-010-000000${numFactura}`;
+
+    const cuerpo = document.querySelector("#tablaProductos tbody");
+    let subtotal = 0;
+    compra.forEach((p, i) => {
+      const precio = parseFloat(p.precio || p.producto?.precio || 0);
+      const cantidad = parseInt(p.cantidad || 1);
+      const total = precio * cantidad;
+      subtotal += total;
+
+      const fila = document.createElement("tr");
+      fila.innerHTML = `
       <td>${1000 + i}</td>
       <td>${p.nombre || "Producto sin nombre"}</td>
       <td>UND</td>
@@ -209,46 +271,47 @@
       <td class="right">0%</td>
       <td class="right">$${total.toFixed(2)}</td>
     `;
-    cuerpo.appendChild(fila);
-  });
+      cuerpo.appendChild(fila);
+    });
 
-  const iva = subtotal * 0.15;
-  const totalFinal = subtotal + iva;
+    const iva = subtotal * 0.15;
+    const totalFinal = subtotal + iva;
 
-  document.getElementById("subtotal").textContent = "$" + subtotal.toFixed(2);
-  document.getElementById("iva").textContent = "$" + iva.toFixed(2);
-  document.getElementById("total").textContent = "$" + totalFinal.toFixed(2);
+    document.getElementById("subtotal").textContent = "$" + subtotal.toFixed(2);
+    document.getElementById("iva").textContent = "$" + iva.toFixed(2);
+    document.getElementById("total").textContent = "$" + totalFinal.toFixed(2);
 
-  // === FUNCIÓN PARA DESCARGAR EN PDF HORIZONTAL ===
-  async function descargarPDF() {
-    const element = document.getElementById("factura");
-    element.style.backgroundColor = "#ffffff"; // Fondo blanco
-    element.style.padding = "20px";
+    // === FUNCIÓN PARA DESCARGAR EN PDF HORIZONTAL ===
+    async function descargarPDF() {
+      const element = document.getElementById("factura");
+      element.style.backgroundColor = "#ffffff"; // Fondo blanco
+      element.style.padding = "20px";
 
-    const opt = {
-      margin: [10, 10, 10, 10], // mm
-      filename: `Factura_NEXU_${numFactura}.pdf`,
-      image: { type: "jpeg", quality: 1 },
-      html2canvas: {
-        scale: 2,
-        useCORS: true,
-        scrollY: 0,
-        backgroundColor: "#ffffff",
-      },
-      jsPDF: { unit: "mm", format: "a4", orientation: "landscape" },
-      pagebreak: { mode: ["avoid-all"] }
-    };
+      const opt = {
+        margin: [10, 10, 10, 10], // mm
+        filename: `Factura_NEXU_${numFactura}.pdf`,
+        image: { type: "jpeg", quality: 1 },
+        html2canvas: {
+          scale: 2,
+          useCORS: true,
+          scrollY: 0,
+          backgroundColor: "#ffffff",
+        },
+        jsPDF: { unit: "mm", format: "a4", orientation: "landscape" },
+        pagebreak: { mode: ["avoid-all"] }
+      };
 
-    await html2pdf().set(opt).from(element).save();
-  }
+      await html2pdf().set(opt).from(element).save();
+    }
 
-  // === DESCARGA AUTOMÁTICA AL CARGAR ===
-  window.addEventListener("load", () => {
-    setTimeout(() => {
-      descargarPDF();
-    }, 1200);
-  });
-</script>
+    // === DESCARGA AUTOMÁTICA AL CARGAR ===
+    window.addEventListener("load", () => {
+      setTimeout(() => {
+        descargarPDF();
+      }, 1200);
+    });
+  </script>
 
-  </body>
+</body>
+
 </html>

@@ -175,7 +175,7 @@
       const usuario = JSON.parse(usuarioStr);
 
       try {
-        const res = await fetch(`http://localhost:4000/api/pedidos/usuario/${usuario.id}`, {
+        const res = await fetch(`https://backend-nexu-produccion.onrender.com/api/pedidos/usuario/${usuario.id}`, {
           headers: { "Authorization": "Bearer " + token }
         });
 
